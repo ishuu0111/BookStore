@@ -3,6 +3,15 @@ const router = express.Router();
 import bcrypt from 'bcryptjs'
 import jwt from 'jsonwebtoken'
 import User from '../models/User.js'
+
+const getJwtSecret = () => {
+    if (!process.env.JWT_SECRET) {
+        throw new Error('Missing required environment variable: JWT_SECRET');
+    }
+
+    return process.env.JWT_SECRET;
+};
+
 router.post('/register', async (req, res) => {
     try {
         const { username, email, password } = req.body;
@@ -47,7 +56,7 @@ router.post('/login', async (req, res) => {
                 id: user._id,
                 username: user.username
             },
-            process.env.JWT_SECRET,
+            getJwtSecret(),
             {
                 expiresIn: '2h'
             }
